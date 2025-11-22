@@ -21,6 +21,9 @@ void displayBooks();
 void searchBook();
 void issueBook();
 void returnBook();
+void updateBook();
+void deleteBook();
+int bookExists(int id);
 
 int main() {
     int choice;
@@ -32,7 +35,9 @@ int main() {
         printf("3. Search Book\n");
         printf("4. Issue Book\n");
         printf("5. Return Book\n");
-        printf("6. Exit\n");
+        printf("6. Update Book\n");
+        printf("7. Delete Book\n");
+        printf("8. Exit\n");
         printf("Enter your choice: ");
         scanf("%d", &choice);
         getchar();
@@ -43,12 +48,23 @@ int main() {
             case 3: searchBook(); break;
             case 4: issueBook(); break;
             case 5: returnBook(); break;
-            case 6: 
+            case 6: updateBook(); break;
+            case 7: deleteBook(); break;
+            case 8: 
                 printf("Exiting program...\n");
                 return 0;
             default: 
                 printf("Invalid choice! Try again.\n");
         }
+    }
+    return 0;
+}
+
+// Function to check if book ID already exists
+int bookExists(int id) {
+    for (int i = 0; i < count; i++) {
+        if (library[i].id == id)
+            return 1;
     }
     return 0;
 }
@@ -61,17 +77,23 @@ void addBook() {
     }
 
     struct Book b;
+
     printf("Enter Book ID: ");
     scanf("%d", &b.id);
     getchar();
 
+    if (bookExists(b.id)) {
+        printf("Book ID already exists! Choose another ID.\n");
+        return;
+    }
+
     printf("Enter Title: ");
     fgets(b.title, sizeof(b.title), stdin);
-    b.title[strcspn(b.title, "\n")] = '\0'; // remove newline
+    b.title[strcspn(b.title, "\n")] = '\0';
 
     printf("Enter Author: ");
     fgets(b.author, sizeof(b.author), stdin);
-    b.author[strcspn(b.author, "\n")] = '\0'; // remove newline
+    b.author[strcspn(b.author, "\n")] = '\0';
 
     printf("Enter Quantity: ");
     scanf("%d", &b.quantity);
@@ -81,6 +103,7 @@ void addBook() {
 
     printf("Book added successfully!\n");
 }
+
 
 // Function to display all books
 void displayBooks() {
@@ -96,7 +119,24 @@ void displayBooks() {
                library[i].id, library[i].title, library[i].author, library[i].quantity);
     }
 }
+// Delete book
+void deleteBook() {
+    int id;
+    printf("Enter Book ID to delete: ");
+    scanf("%d", &id);
 
+    for (int i = 0; i < count; i++) {
+        if (library[i].id == id) {
+            for (int j = i; j < count - 1; j++) {
+                library[j] = library[j + 1];
+            }
+            count--;
+            printf("Book deleted successfully!\n");
+            return;
+        }
+    }
+    printf("Book not found!\n");
+}
 // Function to search a book by ID
 void searchBook() {
     int id, found = 0;
@@ -138,6 +178,34 @@ void issueBook() {
     if (!found)
         printf("Book not found!\n");
 }
+
+// Update book details
+void updateBook() {
+    int id;
+    printf("Enter Book ID to update: ");
+    scanf("%d", &id);
+    getchar();
+
+    for (int i = 0; i < count; i++) {
+        if (library[i].id == id) {
+            printf("Enter new Title: ");
+            fgets(library[i].title, sizeof(library[i].title), stdin);
+            library[i].title[strcspn(library[i].title, "\n")] = '\0';
+
+            printf("Enter new Author: ");
+            fgets(library[i].author, sizeof(library[i].author), stdin);
+            library[i].author[strcspn(library[i].author, "\n")] = '\0';
+
+            printf("Enter new Quantity: ");
+            scanf("%d", &library[i].quantity);
+
+            printf("Book updated successfully!\n");
+            return;
+        }
+    }
+    printf("Book not found!\n");
+}
+
 
 // Function to return a book
 void returnBook() {
