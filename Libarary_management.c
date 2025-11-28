@@ -68,6 +68,13 @@ int bookExists(int id) {
     }
     return 0;
 }
+int titleExists(char title[]) {
+    for (int i = 0; i < count; i++) {
+        if (strcmp(library[i].title, title) == 0)
+            return 1;   // title already present
+    }
+    return 0;
+}
 
 // Function to add a new book
 void addBook() {
@@ -90,6 +97,11 @@ void addBook() {
     printf("Enter Title: ");
     fgets(b.title, sizeof(b.title), stdin);
     b.title[strcspn(b.title, "\n")] = '\0';
+    
+    if (titleExists(b.title)) {
+        printf("Book title already exists! Choose another title.\n");
+        return;
+    }
 
     printf("Enter Author: ");
     fgets(b.author, sizeof(b.author), stdin);
